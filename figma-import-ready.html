@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studieplanerare - Figma Import Ready</title>
+    <style>
+        /* FIGMA IMPORT OPTIMIZATION: Clean, semantic styles with clear hierarchy */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Root variables for easy token conversion */
+        :root {
+            --color-teal-base: #5B9A96;
+            --color-teal-light: #7EBAB5;
+            --color-teal-dark: #4A7B78;
+            --color-beige-base: #E8DCC4;
+            --color-beige-light: #F5F0E8;
+            --color-gray-dark: #2C2C2C;
+            --color-gray-medium: #666666;
+            --color-gray-light: #999999;
+            --color-gray-bg: #F5F5F5;
+            --color-white: #FFFFFF;
+            --color-border: #E0E0E0;
+            
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-xxl: 24px;
+            --spacing-xxxl: 32px;
+            
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-xxl: 24px;
+            --radius-round: 50%;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: #e8e8e8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* MAIN FRAME - This becomes your Figma artboard */
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: var(--color-gray-bg);
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            height: 44px;
+            background: var(--color-gray-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--spacing-xl);
+            font-size: 14px;
+            color: var(--color-gray-medium);
+        }
+
+        /* SCREEN CONTAINER */
+        .screen {
+            height: 708px; /* 812 - 44 - 60 */
+            overflow-y: auto;
+            background: var(--color-gray-bg);
+        }
+
+        /* HEADER SECTION */
+        .header {
+            padding: var(--spacing-xxxl) var(--spacing-xxl) var(--spacing-xxl);
+            background: var(--color-gray-bg);
+        }
+
+        .date-display {
+            font-size: 15px;
+            color: var(--color-gray-light);
+            font-weight: 400;
+            margin-bottom: 4px;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--color-gray-dark);
+            letter-spacing: -0.5px;
+        }
+
+        /* CONTENT CONTAINER */
+        .content {
+            padding: 0 var(--spacing-xxl) var(--spacing-xxl);
+        }
+
+        /* AI ASSISTANT CARD */
+        .assistant-card {
+            background: linear-gradient(135deg, var(--color-teal-base) 0%, var(--color-teal-dark) 100%);
+            color: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: 0 4px 12px rgba(91, 154, 150, 0.2);
+        }
+
+        .assistant-icon {
+            font-size: 24px;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .assistant-text {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .assistant-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .assistant-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--color-white);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* SECTION LABEL */
+        .section-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-gray-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 28px 0 var(--spacing-md);
+        }
+
+        /* TEMPLATES GRID */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .template-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .template-icon {
+            font-size: 28px;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .template-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-gray-dark);
+        }
+
+        /* TASK CARD - MAIN COMPONENT */
+        .task-card {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+            border: 1px solid var(--color-border);
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .task-card.priority-high {
+            border-left: 3px solid var(--color-teal-base);
+        }
+
+        .task-card.due-soon {
+            background: var(--color-beige-light);
+            border-color: var(--color-beige-base);
+        }
+
+        /* CHECKBOX */
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d0d0d0;
+            border-radius: var(--radius-round);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* TASK CONTENT */
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--color-gray-dark);
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .task-meta {
+            font-size: 14px;
+            color: var(--color-gray-medium);
+            line-height: 1.5;
+        }
+
+        /* TASK BADGES */
+        .task-estimate {
+            display: inline-block;
+            padding: 2px var(--spacing-sm);
+            background: var(--color-beige-light);
+            color: var(--color-gray-medium);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            margin-left: var(--spacing-sm);
+        }
+
+        .task-deadline {
+            display: inline-block;
+            padding: 2px var(--spacing-sm);
+            background: var(--color-teal-base);
+            color: var(--color-white);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        /* INPUT FORM */
+        .add-task-form {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            border: 2px solid var(--color-teal-light);
+        }
+
+        .task-input {
+            width: 100%;
+            border: none;
+            font-size: 16px;
+            padding: var(--spacing-md) 0;
+            color: var(--color-gray-dark);
+            outline: none;
+            font-family: var(--font-family);
+        }
+
+        .input-divider {
+            height: 1px;
+            background: var(--color-border);
+            margin: var(--spacing-md) 0;
+        }
+
+        .input-hint {
+            font-size: 13px;
+            color: var(--color-gray-medium);
+            margin-top: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--color-beige-light);
+            border-radius: 6px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        /* BUTTONS */
+        .btn-primary {
+            flex: 1;
+            background: var(--color-teal-base);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md) var(--spacing-xxl);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: var(--font-family);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: none;
+            color: var(--color-gray-medium);
+            padding: var(--spacing-md);
+            font-size: 15px;
+            cursor: pointer;
+            font-family: var(--font-family);
+        }
+
+        /* QUIET NOTE */
+        .quiet-note {
+            background: var(--color-beige-light);
+            border-left: 2px solid var(--color-beige-base);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+            font-size: 14px;
+            color: var(--color-gray-medium);
+            line-height: 1.6;
+            border-radius: var(--radius-sm);
+        }
+
+        /* BOTTOM NAVIGATION */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 375px;
+            height: 60px;
+            background: var(--color-white);
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: var(--spacing-sm) var(--spacing-xl);
+            color: var(--color-gray-light);
+        }
+
+        .nav-item.active {
+            color: var(--color-teal-base);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* CALENDAR COMPONENTS */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            padding: 0 var(--spacing-xxl);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .day-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--color-gray-light);
+            padding: var(--spacing-md) 0;
+            text-transform: uppercase;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: var(--color-gray-dark);
+            border-radius: var(--radius-md);
+            position: relative;
+        }
+
+        .day-cell.today {
+            background: var(--color-teal-base);
+            color: var(--color-white);
+        }
+
+        .day-cell.has-tasks::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            width: 3px;
+            height: 3px;
+            background: var(--color-teal-base);
+            border-radius: var(--radius-round);
+        }
+
+        .day-cell.today.has-tasks::after {
+            background: var(--color-white);
+        }
+
+        .day-cell.overbooked {
+            background: var(--color-beige-light);
+        }
+
+        .day-cell.other-month {
+            color: #ccc;
+        }
+
+        /* TIMER COMPONENTS */
+        .timer-container {
+            padding: 40px var(--spacing-xxl) var(--spacing-xxl);
+            text-align: center;
+        }
+
+        .timer-circle {
+            width: 240px;
+            height: 240px;
+            margin: 0 auto var(--spacing-xxxl);
+            border-radius: var(--radius-round);
+            background: var(--color-white);
+            border: 3px solid var(--color-teal-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-display {
+            font-size: 56px;
+            font-weight: 300;
+            color: var(--color-gray-dark);
+            letter-spacing: -2px;
+        }
+
+        .timer-label {
+            font-size: 14px;
+            color: var(--color-gray-medium);
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .timer-btn-primary {
+            background: var(--color-teal-base);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-xxl);
+            padding: 14px 40px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: var(--font-family);
+        }
+
+        .timer-btn-secondary {
+            background: var(--color-white);
+            color: var(--color-gray-dark);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xxl);
+            padding: 14px 40px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: var(--spacing-md);
+            font-family: var(--font-family);
+        }
+
+        /* REFLECTION COMPONENTS */
+        .reflection-section {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xxl);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+
+        .reflection-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--color-gray-dark);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .reflection-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .reflection-item:last-child {
+            border-bottom: none;
+        }
+
+        .reflection-label {
+            font-size: 15px;
+            color: var(--color-gray-medium);
+        }
+
+        .reflection-value {
+            font-size: 15px;
+            color: var(--color-gray-dark);
+            font-weight: 500;
+        }
+
+        .reflection-insight {
+            background: var(--color-beige-light);
+            border-left: 3px solid var(--color-teal-base);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            font-size: 14px;
+            color: var(--color-gray-medium);
+            line-height: 1.6;
+            border-radius: var(--radius-sm);
+        }
+    </style>
+</head>
+<body>
+    <!-- MAIN PHONE FRAME - Import this as single artboard -->
+    <div class="phone-frame" id="figma-import-root">
+        
+        <!-- STATUS BAR -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>📶 🔋</span>
+        </div>
+
+        <!-- MAIN SCREEN: IDAG (HOME) -->
+        <div class="screen">
+            
+            <!-- HEADER -->
+            <div class="header">
+                <div class="date-display">Fredag 14 februari</div>
+                <h1 class="header-title">Idag</h1>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="content">
+                
+                <!-- AI ASSISTANT CARD -->
+                <div class="assistant-card">
+                    <div class="assistant-icon">💡</div>
+                    <div class="assistant-text">
+                        Du har 6 timmar planerat idag. Det är lite ambitiöst - vill du prioritera 2-3 viktigaste?
+                    </div>
+                    <div class="assistant-actions">
+                        <button class="assistant-btn">Hjälp mig välja</button>
+                        <button class="assistant-btn">Nej tack</button>
+                    </div>
+                </div>
+
+                <!-- SECTION LABEL -->
+                <div class="section-label">Snabbstart</div>
+
+                <!-- TEMPLATES GRID -->
+                <div class="templates-grid">
+                    <div class="template-card">
+                        <div class="template-icon">📚</div>
+                        <div class="template-label">Repetera inför prov</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">✍️</div>
+                        <div class="template-label">Skriva uppsats</div>
+                    </div>
+                </div>
+
+                <!-- INPUT FORM (Example - normally hidden) -->
+                <div class="add-task-form">
+                    <input type="text" class="task-input" placeholder="T.ex: Läsa 50 sidor biologi till fredag kl 15">
+                    <div class="input-divider"></div>
+                    <div class="input-hint">✓ Jag ser en deadline i din text</div>
+                    <div class="input-divider"></div>
+                    <div class="form-actions">
+                        <button class="btn-primary">Lägg till</button>
+                        <button class="btn-secondary">Avbryt</button>
+                    </div>
+                </div>
+
+                <!-- SECTION LABEL -->
+                <div class="section-label">Prioriterade uppgifter</div>
+
+                <!-- TASK CARD 1 - Priority High + Due Soon -->
+                <div class="task-card priority-high due-soon">
+                    <div class="checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">Läs kapitel 5 i matematikboken</div>
+                        <div class="task-meta">
+                            Övningsuppgifter 1-15
+                            <span class="task-estimate">~2h</span>
+                            <div class="task-deadline">Idag 14:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TASK CARD 2 - Priority High -->
+                <div class="task-card priority-high">
+                    <div class="checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">Jobba på uppsatsen</div>
+                        <div class="task-meta">
+                            Färdigställ utkast - Historia
+                            <span class="task-estimate">~3h</span>
+                            <div class="task-deadline">Imorgon 12:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION LABEL -->
+                <div class="section-label">Övriga</div>
+
+                <!-- TASK CARD 3 - Default -->
+                <div class="task-card">
+                    <div class="checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">Förbereda presentation</div>
+                        <div class="task-meta">
+                            Industriella revolutionen
+                            <span class="task-estimate">~1.5h</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TASK CARD 4 - Default -->
+                <div class="task-card">
+                    <div class="checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">Läsa kapitel 3-4</div>
+                        <div class="task-meta">
+                            Engelska
+                            <span class="task-estimate">~1h</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- BOTTOM NAVIGATION -->
+        <div class="bottom-nav">
+            <div class="nav-item active">
+                <div class="nav-icon">○</div>
+                <div class="nav-label">Idag</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">◫</div>
+                <div class="nav-label">Kalender</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">◷</div>
+                <div class="nav-label">Fokus</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">◐</div>
+                <div class="nav-label">Reflektion</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SEPARATE COMPONENTS FOR FIGMA IMPORT -->
+    <!-- Place these outside the phone frame, they'll import as separate elements -->
+
+    <!-- CALENDAR EXAMPLE -->
+    <div style="position: absolute; left: -9999px;">
+        <div class="calendar-grid" style="width: 327px;">
+            <div class="day-label">Mån</div>
+            <div class="day-label">Tis</div>
+            <div class="day-label">Ons</div>
+            <div class="day-label">Tor</div>
+            <div class="day-label">Fre</div>
+            <div class="day-label">Lör</div>
+            <div class="day-label">Sön</div>
+            
+            <div class="day-cell">3</div>
+            <div class="day-cell">4</div>
+            <div class="day-cell has-tasks">5</div>
+            <div class="day-cell">6</div>
+            <div class="day-cell">7</div>
+            <div class="day-cell">8</div>
+            <div class="day-cell">9</div>
+            <div class="day-cell has-tasks overbooked">10</div>
+            <div class="day-cell">11</div>
+            <div class="day-cell">12</div>
+            <div class="day-cell">13</div>
+            <div class="day-cell today has-tasks">14</div>
+            <div class="day-cell">15</div>
+            <div class="day-cell">16</div>
+        </div>
+    </div>
+
+    <!-- TIMER EXAMPLE -->
+    <div style="position: absolute; left: -9999px;">
+        <div class="timer-container">
+            <div class="timer-label">Fokuspass</div>
+            <div class="timer-circle">
+                <div class="timer-display">25:00</div>
+            </div>
+            <button class="timer-btn-primary">Starta</button>
+            <button class="timer-btn-secondary">Återställ</button>
+        </div>
+    </div>
+
+    <!-- REFLECTION EXAMPLE -->
+    <div style="position: absolute; left: -9999px;">
+        <div class="reflection-section" style="width: 327px;">
+            <div class="reflection-title">Tiden du lagt ner</div>
+            <div class="reflection-item">
+                <span class="reflection-label">Studietimmar</span>
+                <span class="reflection-value">18 timmar</span>
+            </div>
+            <div class="reflection-item">
+                <span class="reflection-label">Genomsnitt/dag</span>
+                <span class="reflection-value">2.6 timmar</span>
+            </div>
+            <div class="reflection-insight">
+                <strong>Insikt:</strong> Du studerar mest på förmiddagar (10-12). Kanske planera tunga uppgifter då när du är som piggast?
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
